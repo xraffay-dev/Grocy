@@ -5,11 +5,6 @@ const { storeRahimStoreData } = require("../controllers/rahimStoreController");
 const { storeMetroData } = require("../controllers/metroController");
 const { storeRajaSahibData } = require("../controllers/rajaSahibController");
 
-/**
- * Parse a CSV line, handling quoted fields that may contain commas
- * @param {string} line - The CSV line to parse
- * @returns {string[]} - Array of field values
- */
 function parseCSVLine(line) {
   const fields = [];
   let currentField = "";
@@ -35,14 +30,13 @@ function parseCSVLine(line) {
   }
 
   fields.push(currentField);
-
   return fields;
 }
 
 async function extractData(fileName, storeName = "") {
   try {
     const data = await fs.readFile(fileName, "utf8");
-    const lines = data.split("\n").filter((line) => line.trim() !== ""); // Remove empty lines
+    const lines = data.split("\n").filter((line) => line.trim() !== "");
     const items = lines.map((line) => parseCSVLine(line.trim()));
 
     if (storeName === "alFatah") {

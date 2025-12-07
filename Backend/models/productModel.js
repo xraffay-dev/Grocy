@@ -32,7 +32,7 @@ const productSchema = new Schema(
       required: true,
     },
     discount: {
-      type: Number, //Percentage
+      type: Number,
       required: false,
       default: 0,
     },

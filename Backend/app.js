@@ -2,6 +2,16 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
+const connectDB = require("./config/dbConfig");
+const extractData = require("./utils/extractData");
+const metroRouter = require("./routes/metroRouter");
+const alFatahRouter = require("./routes/alFatahRouter");
+const featuredRouter = require("./routes/featuredRouter");
+const jalalSonsRouter = require("./routes/jalalSonsRouter");
+const rajaSahibRouter = require("./routes/rajaSahibRouter");
+const rahimStoreRouter = require("./routes/rahimStoreRouter");
+const productMatchesRouter = require("./routes/productMatchesRouter");
+
 const app = express();
 
 app.use(
@@ -12,15 +22,7 @@ app.use(
   })
 );
 
-const connectDB = require("./config/dbConfig");
 
-const extractData = require("./utils/extractData");
-
-const metroRouter = require("./routes/metroRouter");
-const alFatahRouter = require("./routes/alFatahRouter");
-const jalalSonsRouter = require("./routes/jalalSonsRouter");
-const rajaSahibRouter = require("./routes/rajaSahibRouter");
-const rahimStoreRouter = require("./routes/rahimStoreRouter");
 
 const PORT = process.env.PORT || 8000;
 
@@ -33,9 +35,11 @@ connectDB();
 
 app.use("/metro", metroRouter);
 app.use("/alfatah", alFatahRouter);
+app.use("/featured", featuredRouter);
 app.use("/jalalsons", jalalSonsRouter);
 app.use("/rajasahib", rajaSahibRouter);
 app.use("/rahimstore", rahimStoreRouter);
+app.use("/matches", productMatchesRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -87,32 +87,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="p-4">
-        {/* Store Logos Section */}
-        {storePrices && storePrices.length > 0 && (
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
-            {storePrices.slice(0, 5).map((storePrice) => {
-              const logo = getStoreLogo(storePrice.storeName);
-              return logo ? (
-                <div key={storePrice.storeId} className="relative group/logo">
-                  <img
-                    src={logo}
-                    alt={storePrice.storeName}
-                    className="h-7 w-auto object-contain flex-shrink-0 rounded hover:scale-110 transition-transform"
-                  />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs bg-gray-900 text-white rounded opacity-0 group-hover/logo:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    {storePrice.storeName}
-                  </span>
-                </div>
-              ) : null;
-            })}
-            {storePrices.length > 5 && (
-              <span className="text-xs text-gray-500 font-medium">
-                +{storePrices.length - 5}
-              </span>
-            )}
-          </div>
-        )}
-
         <Link to={`/product/${id}`}>
           <h3 className="font-bold text-base mb-3 hover:text-primary-600 transition-colors line-clamp-2 leading-tight">
             {name}
@@ -166,12 +140,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                         Rs. {store.price.toFixed(0)}
                       </div>
                       {idx === 0 && displayStores.length > 1 && savings > 0 && (
-                        <div className="flex items-center gap-1 text-xs">
+                        <div className="text-xs">
                           <span className="text-gray-500 line-through">
                             Rs. {highestPrice.toFixed(0)}
-                          </span>
-                          <span className="text-green-600 font-semibold">
-                            Rs. {savings.toFixed(0)} less
                           </span>
                         </div>
                       )}

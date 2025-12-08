@@ -24,13 +24,11 @@ const PriceComparison = ({
     return null;
   }
 
-  // Sort stores by price (lowest first)
   const sortedStores = [...storePrices].sort((a, b) => a.price - b.price);
   const lowestPrice = sortedStores[0]?.price || defaultPrice;
   const highestPrice =
     sortedStores[sortedStores.length - 1]?.price || defaultPrice;
 
-  // Calculate savings for each store compared to highest price
   const getSavings = (price: number) => {
     if (highestPrice === price) return null;
     const savings = highestPrice - price;
@@ -38,7 +36,6 @@ const PriceComparison = ({
     return { amount: savings, percentage };
   };
 
-  // Show first 3 stores, then indicate more
   const visibleStores = sortedStores.slice(0, 3);
   const moreStores = sortedStores.length - 3;
 
@@ -75,7 +72,6 @@ const PriceComparison = ({
               } transition-all duration-300 hover:scale-[1.02]`}
             >
               <div className="flex items-center gap-4 flex-1">
-                {/* Store Logo/Initials */}
                 <div
                   className={`w-14 h-14 rounded-xl flex items-center justify-center font-bold text-white shadow-lg ${
                     isLowest
@@ -159,7 +155,6 @@ const PriceComparison = ({
         )}
       </div>
 
-      {/* Price Range Summary */}
       {sortedStores.length > 1 && (
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex items-center justify-between text-sm text-gray-600">

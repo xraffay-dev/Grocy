@@ -21,6 +21,7 @@ export interface Product {
   image: string;
   category: string;
   description: string;
+  storeUrl?: string; // URL to the product on the original store
   inStock: boolean;
   rating?: number;
   reviews?: number;

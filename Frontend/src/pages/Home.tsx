@@ -1,14 +1,75 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
-import { products, stores } from "../data/mockProducts";
+import { stores, Product, StorePrice } from "../data/mockProducts";
+import { fetchProductsWithMatches, ProductWithMatches } from "../services/api";
 
 const Home = () => {
-  const featuredProducts = products.slice(0, 8);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadFeaturedProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchProductsWithMatches(8);
+
+        if (response.success && response.data) {
+          const transformedProducts: Product[] = response.data.map(
+            (item: ProductWithMatches) => {
+              const storePrices: StorePrice[] = [
+                {
+                  storeId: item.product_id,
+                  storeName: item.store,
+                  price: item.price,
+                  inStock: true,
+                  link: item.url,
+                },
+                ...item.exact_matches.map((match) => ({
+                  storeId: match.product_id,
+                  storeName: match.store,
+                  price: match.price,
+                  inStock: true,
+                  link: match.url,
+                })),
+                ...item.semantic_matches.map((match) => ({
+                  storeId: match.product_id,
+                  storeName: match.store,
+                  price: match.price,
+                  inStock: true,
+                  link: match.url,
+                })),
+              ].sort((a, b) => a.price - b.price);
+
+              return {
+                id: item.product_id,
+                name: item.product_name,
+                price: item.price,
+                image: item.image || "https://via.placeholder.com/400",
+                category: "general",
+                description: `Available at ${item.store}`,
+                storeUrl: item.url || undefined,
+                inStock: true,
+                storePrices,
+              };
+            }
+          );
+
+          setFeaturedProducts(transformedProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeaturedProducts();
+  }, []);
 
   return (
     <div>
-      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-600 via-primary-500 to-primary-700 text-white overflow-hidden">
         <div
           className="absolute inset-0 opacity-20"
@@ -43,7 +104,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stores Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
@@ -76,7 +136,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-16">
@@ -85,7 +144,7 @@ const Home = () => {
                 Featured <span className="gradient-text">Products</span>
               </h2>
               <p className="text-gray-600 text-lg">
-                Handpicked favorites just for you
+                Compare prices across multiple stores
               </p>
             </div>
             <Link
@@ -99,21 +158,33 @@ const Home = () => {
               />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product, index) => (
-              <div
-                key={product.id}
-                style={{ animationDelay: `${index * 100}ms` }}
-                className="animate-fade-in"
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent"></div>
+            </div>
+          ) : featuredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-500 text-lg">
+                No featured products available
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((product, index) => (
+                <div
+                  key={product.id}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="animate-fade-in"
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Why Choose Us */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">

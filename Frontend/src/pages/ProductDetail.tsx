@@ -1,21 +1,150 @@
 import { useParams, Link } from "react-router-dom";
-import { ShoppingCart, Star, Minus, Plus } from "lucide-react";
-import { useState } from "react";
-import { getProductById, products } from "../data/mockProducts";
+import {
+  ShoppingCart,
+  Minus,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import ProductCard from "../components/ProductCard";
 import PriceComparison from "../components/PriceComparison";
+import { Product, StorePrice } from "../data/mockProducts";
+import {
+  fetchProductMatches,
+  fetchYouMayAlsoLike,
+  ProductWithMatches,
+  FeaturedRecommendation,
+} from "../services/api";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const product = id ? getProductById(id) : undefined;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
 
-  if (!product) {
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!id) {
+        setError("Product ID not found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const matchesResponse = await fetchProductMatches(id);
+
+        if (matchesResponse.success && matchesResponse.data) {
+          const item: ProductWithMatches = matchesResponse.data;
+
+          const storePrices: StorePrice[] = [
+            {
+              storeId: item.product_id,
+              storeName: item.store,
+              price: item.price,
+              inStock: true,
+              link: item.url,
+            },
+            ...item.exact_matches.map((match) => ({
+              storeId: match.product_id,
+              storeName: match.store,
+              price: match.price,
+              inStock: true,
+              link: match.url,
+            })),
+            ...item.semantic_matches.map((match) => ({
+              storeId: match.product_id,
+              storeName: match.store,
+              price: match.price,
+              inStock: true,
+              link: match.url,
+            })),
+          ].sort((a, b) => a.price - b.price);
+
+          const transformedProduct: Product = {
+            id: item.product_id,
+            name: item.product_name,
+            price: item.price,
+            image: item.image || "https://via.placeholder.com/400",
+            category: "general",
+            description: `Available at ${item.store}`,
+            storeUrl: item.url || undefined,
+            inStock: true,
+            storePrices,
+          };
+
+          setProduct(transformedProduct);
+
+          try {
+            const recsResponse = await fetchYouMayAlsoLike(
+              id,
+              item.product_name
+            );
+            if (
+              recsResponse.success &&
+              recsResponse.data?.recommendations?.length > 0
+            ) {
+              const transformedRelated = recsResponse.data.recommendations
+                .slice(0, 10)
+                .map((rec: FeaturedRecommendation) => ({
+                  id: rec.product_id,
+                  name: rec.name,
+                  price: rec.price,
+                  image: rec.image || "https://via.placeholder.com/400",
+                  category: rec.category || "general",
+                  description: `Available at ${rec.store}`,
+                  storeUrl: rec.url || undefined,
+                  inStock: true,
+                  storePrices: [
+                    {
+                      storeId: rec.product_id,
+                      storeName: rec.store,
+                      price: rec.price,
+                      inStock: true,
+                      link: rec.url,
+                    },
+                  ],
+                }));
+              setRelatedProducts(transformedRelated);
+            }
+          } catch {
+            console.log("No recommendations available for this product");
+          }
+        } else {
+          setError("Product not found");
+        }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setError("Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent"></div>
+        <p className="mt-4 text-gray-600">Loading product...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
+        <p className="text-gray-600 mb-4">{error}</p>
         <Link to="/products" className="text-primary-600 hover:underline">
           Continue Shopping
         </Link>
@@ -23,14 +152,7 @@ const ProductDetail = () => {
     );
   }
 
-  // Show random related products instead of by category
-  const relatedProducts = products
-    .filter((p) => p.id !== product.id)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 4);
-
   const handleAddToCart = () => {
-    // Use the lowest price from storePrices if available, otherwise use default price
     const priceToUse =
       product.storePrices && product.storePrices.length > 0
         ? Math.min(...product.storePrices.map((sp) => sp.price))
@@ -46,7 +168,6 @@ const ProductDetail = () => {
     }
   };
 
-  // Calculate savings if store prices are available
   const getSavingsInfo = () => {
     if (!product.storePrices || product.storePrices.length === 0) return null;
 
@@ -73,7 +194,6 @@ const ProductDetail = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        {/* Product Image */}
         <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
           <img
             src={product.image}
@@ -92,37 +212,13 @@ const ProductDetail = () => {
           )}
         </div>
 
-        {/* Product Info */}
         <div>
           <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-
-          {product.rating && (
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={20}
-                    className={
-                      i < Math.floor(product.rating!)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
-                    }
-                  />
-                ))}
-              </div>
-              <span className="text-gray-600">
-                {product.rating} ({product.totalReviews || product.reviews}{" "}
-                reviews from {product.storePrices?.length || 1}{" "}
-                {product.storePrices?.length === 1 ? "store" : "stores"})
-              </span>
-            </div>
-          )}
 
           <div className="mb-6">
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-primary-600">
-                Rs.
+                Rs.{" "}
                 {(product.storePrices && product.storePrices.length > 0
                   ? Math.min(...product.storePrices.map((sp) => sp.price))
                   : product.price
@@ -136,15 +232,26 @@ const ProductDetail = () => {
             </div>
             {savingsInfo && (
               <p className="text-green-600 font-medium mt-1">
-                Best price available - Save up to Rs.
+                Best price available - Save up to Rs.{" "}
                 {savingsInfo.amount.toFixed(0)}
               </p>
             )}
           </div>
 
-          <p className="text-gray-700 mb-8 text-lg leading-relaxed">
-            {product.description}
-          </p>
+          {product.storeUrl ? (
+            <a
+              href={product.storeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-primary-600 hover:text-primary-700 mb-8 text-lg font-medium underline decoration-2 underline-offset-4 hover:decoration-primary-700 transition-colors"
+            >
+              {product.description} ↗
+            </a>
+          ) : (
+            <p className="text-gray-700 mb-8 text-lg leading-relaxed">
+              {product.description}
+            </p>
+          )}
 
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-6">
@@ -188,12 +295,15 @@ const ProductDetail = () => {
                   .join(" & ")}
               </li>
               <li>Status: {product.inStock ? "In Stock" : "Out of Stock"}</li>
+              <li>
+                Available at {product.storePrices?.length || 1}{" "}
+                {product.storePrices?.length === 1 ? "store" : "stores"}
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Price Comparison Section */}
       {product.storePrices && product.storePrices.length > 0 && (
         <div className="mb-16">
           <PriceComparison
@@ -204,49 +314,60 @@ const ProductDetail = () => {
         </div>
       )}
 
-      {/* Customer Reviews Section */}
-      {product.rating && product.totalReviews && (
-        <div className="card p-6 mb-16">
-          <h2 className="text-2xl font-semibold mb-6">What people say</h2>
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={24}
-                  className={
-                    i < Math.floor(product.rating!)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
-                  }
-                />
-              ))}
-            </div>
-            <span className="text-lg font-semibold">
-              {product.totalReviews} reviews from{" "}
-              {product.storePrices?.length || 1}{" "}
-              {product.storePrices?.length === 1 ? "shop" : "shops"}
-            </span>
-          </div>
-          <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary-600">
-            <p className="text-gray-700 italic">
-              "Great quality product! I've been buying this regularly and it
-              never disappoints. The price comparison feature helped me find the
-              best deal. Highly recommend!"
-            </p>
-            <p className="text-sm text-gray-500 mt-3">- Verified Customer</p>
-          </div>
-        </div>
-      )}
-
-      {/* Related Products */}
       {relatedProducts.length > 0 && (
         <section className="mt-16">
           <h2 className="text-3xl font-bold mb-8">You May Also Like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((relatedProduct) => (
-              <ProductCard key={relatedProduct.id} product={relatedProduct} />
-            ))}
+          <div className="relative group">
+            <button
+              onClick={() => {
+                const container = document.getElementById(
+                  "recommendations-carousel"
+                );
+                if (container) {
+                  container.scrollBy({ left: -320, behavior: "smooth" });
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-primary-600 hover:text-white text-gray-700 transition-all duration-300 shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+              aria-label="Previous recommendations"
+            >
+              <ChevronLeft size={28} />
+            </button>
+
+            <button
+              onClick={() => {
+                const container = document.getElementById(
+                  "recommendations-carousel"
+                );
+                if (container) {
+                  container.scrollBy({ left: 320, behavior: "smooth" });
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-primary-600 hover:text-white text-gray-700 transition-all duration-300 shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0"
+              aria-label="Next recommendations"
+            >
+              <ChevronRight size={28} />
+            </button>
+
+            <div
+              id="recommendations-carousel"
+              className="flex gap-6 overflow-x-auto scroll-smooth pb-4 px-2 snap-x snap-mandatory"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {relatedProducts.map((relatedProduct) => (
+                <div
+                  key={relatedProduct.id}
+                  className="flex-shrink-0 w-[280px] snap-start"
+                >
+                  <ProductCard product={relatedProduct} />
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-white to-transparent pointer-events-none" />
           </div>
         </section>
       )}

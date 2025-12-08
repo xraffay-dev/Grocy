@@ -1,0 +1,67 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Generated data files (regenerated during training)
+all_products.csv
+candidate_pairs.csv
+duplicate_products.csv
+product_features_v5.csv
+
+# Training outputs (regenerated during training)
+training_history_*.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Old model versions (kept locally, ignored in git)
+model-v1/
+model-v2/
+model-v3/
+model-v4/
+
+# Old model artifacts in models folder
+models/best_autoencoder.keras
+models/best_autoencoder_v3.keras
+models/best_autoencoder_v4.keras
+models/feature_extractors.pkl
+models/feature_extractors_v2.pkl
+models/feature_extractors_v3.pkl
+models/feature_extractors_v4.pkl
+models/features_scaled.npy
+models/features_scaled_v2.npy
+models/features_scaled_v3.npy
+models/features_scaled_v4.npy
+models/product_embeddings.npy
+models/product_embeddings_v3.npy
+models/product_embeddings_v4.npy
+models/recommender_autoencoder.keras
+models/recommender_config.json
+models/recommender_encoder.keras
+models/recommender_v3_autoencoder.keras
+models/recommender_v3_config.json
+models/recommender_v3_encoder.keras
+models/recommender_v4_autoencoder.keras
+models/recommender_v4_config.json
+models/recommender_v4_encoder.keras
+models/semantic_embeddings_v4.npy

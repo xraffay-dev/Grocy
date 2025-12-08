@@ -1,0 +1,5 @@
+{
+  "input_dim": 596,
+  "encoding_dim": 128,
+  "num_categories": 28
+}

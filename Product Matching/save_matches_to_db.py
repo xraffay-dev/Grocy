@@ -238,7 +238,7 @@ def main():
     try:
         MONGO_URI = "mongodb://localhost:27017/"
         DB_NAME = "Grocy"
-        COLLECTION_NAME = "ProductMatches"
+        COLLECTION_NAME = "Product Matches"
         TOP_K = 10
         
         saver = ProductMatchSaver(mongo_uri=MONGO_URI, db_name=DB_NAME)

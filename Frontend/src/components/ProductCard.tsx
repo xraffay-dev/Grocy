@@ -5,11 +5,15 @@ import { Product, StorePrice, stores } from "../data/mockProducts";
 
 interface ProductCardProps {
   product: Product;
+  storePath?: string;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, storePath }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { id, name, price, image, storePrices, promotionalBanners } = product;
+
+  // Generate product URL based on whether we're in a store-specific view
+  const productUrl = storePath ? `${storePath}/${id}` : `/product/${id}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -19,7 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const url = `${window.location.origin}/product/${id}`;
+    const url = `${window.location.origin}${productUrl}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -62,7 +66,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="card-hover group animate-fade-in bg-white">
-      <Link to={`/product/${id}`}>
+      <Link to={productUrl}>
         <div className="aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 relative">
           <img
             src={image}
@@ -87,7 +91,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="p-4">
-        <Link to={`/product/${id}`}>
+        <Link to={productUrl}>
           <h3 className="font-bold text-base mb-3 hover:text-primary-600 transition-colors line-clamp-2 leading-tight">
             {name}
           </h3>

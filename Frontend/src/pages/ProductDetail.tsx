@@ -16,10 +16,12 @@ import {
   fetchYouMayAlsoLike,
   ProductWithMatches,
   FeaturedRecommendation,
+  fetchProductByIdFromStore,
+  BackendProduct,
 } from "../services/api";
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, store } = useParams<{ id: string; store?: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +41,54 @@ const ProductDetail = () => {
         setLoading(true);
         setError(null);
 
+        // Map store slug to store name
+        const storeNameMap: Record<string, string> = {
+          "al-fatah": "Al-Fatah",
+          metro: "Metro",
+          "jalal-sons": "Jalal Sons",
+          "raja-sahib": "Raja Sahib",
+          "rahim-store": "Rahim Store",
+        };
+
+        // If we have a store parameter, fetch from store-specific endpoint
+        if (store && storeNameMap[store]) {
+          const storeName = storeNameMap[store];
+          const storeResponse = await fetchProductByIdFromStore(id, storeName);
+
+          if (storeResponse.success && storeResponse.data) {
+            const item: BackendProduct = storeResponse.data;
+
+            const transformedProduct: Product = {
+              id: item._id,
+              name: item.productName,
+              price: item.discountedPrice || item.originalPrice,
+              image: item.productImage || "https://via.placeholder.com/400",
+              category: "general",
+              description: `Available at ${item.availableAt}`,
+              storeUrl: item.productURL || undefined,
+              inStock: true,
+              storePrices: [
+                {
+                  storeId: item._id,
+                  storeName: item.availableAt,
+                  price: item.discountedPrice || item.originalPrice,
+                  inStock: true,
+                  link: item.productURL,
+                },
+              ],
+            };
+
+            setProduct(transformedProduct);
+            setLoading(false);
+            return;
+          } else {
+            setError("Product not found in this store");
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Otherwise, fetch from product matches endpoint
         const matchesResponse = await fetchProductMatches(id);
 
         if (matchesResponse.success && matchesResponse.data) {
@@ -129,7 +179,7 @@ const ProductDetail = () => {
     };
 
     loadProduct();
-  }, [id]);
+  }, [id, store]);
 
   if (loading) {
     return (

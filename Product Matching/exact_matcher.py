@@ -185,7 +185,6 @@ class ExactMatcher:
 
 
 if __name__ == "__main__":
-    # Test the exact matcher with sample data
     sample_products = [
         {
             'productID': '1',

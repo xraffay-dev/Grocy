@@ -92,7 +92,7 @@ class ProductExtractor:
         
         # Remove exact duplicates within same store
         original_len = len(df)
-        print("Duplicates:",df.duplicates(subset=['name', 'store'], keep='first'))
+        print("Duplicates:", df.duplicated(subset=['name', 'store'], keep='first').sum())
         df = df.drop_duplicates(subset=['name', 'store'], keep='first')
         print(f"Removed {original_len - len(df)} exact duplicates")
         

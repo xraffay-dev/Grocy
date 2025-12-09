@@ -111,7 +111,7 @@ const displayProduct = async (productID = "nil") => {
       return { success: false, status: 404, message: "Product not found" };
     }
 
-    const product = await productModel.findOne({ productID });
+    const product = await productModel.findById(productID);
 
     if (!product) {
       return { success: false, status: 404, message: "Product not found" };
@@ -121,6 +121,7 @@ const displayProduct = async (productID = "nil") => {
       success: true,
       status: 200,
       data: {
+        _id: product._id,
         productID: product.productID,
         productName: product.productName,
         productURL: product.productURL,

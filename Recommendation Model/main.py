@@ -17,6 +17,7 @@ from datetime import datetime
 
 SCRIPTS = [
     ("mongodb_extract.py", "Extracting data from MongoDB"),
+    ("feature_extraction_v5.py", "Extracting features from products"),
     ("train_model_v5.py", "Training recommendation model"),
     ("save_recommendations_to_db.py", "Saving recommendations to database"),
 ]

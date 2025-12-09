@@ -28,9 +28,9 @@ async function storeMetroData(items) {
         continue;
       }
 
-      let productURL = items[i][4]?.trim() || "";
-      const productImage = items[i][5]?.trim() || "";
-      const discountStr = items[i][6]?.trim() || "0";
+      let productURL = items[i][5]?.trim() || "";
+      const productImage = items[i][6]?.trim() || "";
+      const discountStr = items[i][7]?.trim() || "0";
       let discount = 0;
 
       if (discountStr === "0" || discountStr === "") {
@@ -128,7 +128,7 @@ const displayProduct = async (productID = "nil") => {
       return { success: false, status: 404, message: "Product not found" };
     }
 
-    const product = await productModel.findOne({ productID });
+    const product = await productModel.findById(productID);
 
     if (!product) {
       return { success: false, status: 404, message: "Product not found" };
@@ -138,6 +138,7 @@ const displayProduct = async (productID = "nil") => {
       success: true,
       status: 200,
       data: {
+        _id: product._id,
         productID: product.productID,
         productName: product.productName,
         productURL: product.productURL,

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart, Share2 } from "lucide-react";
 import { useCart } from "../contexts/CartContext";
-import { Product, StorePrice, stores } from "../data/mockProducts";
+import { Product, StorePrice } from "../types";
+import { stores } from "../constants/stores";
 
 interface ProductCardProps {
   product: Product;

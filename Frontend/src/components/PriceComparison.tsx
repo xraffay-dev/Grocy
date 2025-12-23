@@ -11,13 +11,11 @@ export interface StorePrice {
 
 interface PriceComparisonProps {
   storePrices: StorePrice[];
-  productName: string;
   defaultPrice: number;
 }
 
 const PriceComparison = ({
   storePrices,
-  productName,
   defaultPrice,
 }: PriceComparisonProps) => {
   if (!storePrices || storePrices.length === 0) {

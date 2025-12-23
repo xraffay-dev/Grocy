@@ -1,15 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, User, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
-import { stores } from "../data/mockProducts";
+import { stores } from "../constants/stores";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { getTotalItems } = useCart();
   const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <header className="glass sticky top-0 z-50 border-b border-gray-200/50 backdrop-blur-xl">
@@ -32,6 +39,7 @@ const Header = () => {
                 placeholder="Search for products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleSearchKeyPress}
                 className="input-field pl-12 pr-4"
               />
               <Search
@@ -102,6 +110,7 @@ const Header = () => {
               placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
               className="input-field pl-12 pr-4"
             />
             <Search

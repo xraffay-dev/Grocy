@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
-import { stores, Product, StorePrice } from "../data/mockProducts";
+import { Product, StorePrice, Store } from "../types";
+import { stores } from "../constants/stores";
 import { fetchProductsWithMatches, ProductWithMatches } from "../services/api";
 
 const Home = () => {
@@ -114,7 +115,7 @@ const Home = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {stores.map((store, index) => (
+          {stores.map((store: Store, index: number) => (
             <Link
               key={store.path}
               to={store.path}

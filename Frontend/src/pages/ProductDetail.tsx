@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import ProductCard from "../components/ProductCard";
 import PriceComparison from "../components/PriceComparison";
-import { Product, StorePrice } from "../data/mockProducts";
+import { Product, StorePrice } from "../types";
 import {
   fetchProductMatches,
   fetchYouMayAlsoLike,
@@ -205,7 +205,7 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     const priceToUse =
       product.storePrices && product.storePrices.length > 0
-        ? Math.min(...product.storePrices.map((sp) => sp.price))
+        ? Math.min(...product.storePrices.map((sp: StorePrice) => sp.price))
         : product.price;
 
     for (let i = 0; i < quantity; i++) {
@@ -221,7 +221,7 @@ const ProductDetail = () => {
   const getSavingsInfo = () => {
     if (!product.storePrices || product.storePrices.length === 0) return null;
 
-    const prices = product.storePrices.map((sp) => sp.price);
+    const prices = product.storePrices.map((sp: StorePrice) => sp.price);
     const lowestPrice = Math.min(...prices);
     const highestPrice = Math.max(...prices);
 
@@ -270,7 +270,9 @@ const ProductDetail = () => {
               <span className="text-4xl font-bold text-primary-600">
                 Rs.{" "}
                 {(product.storePrices && product.storePrices.length > 0
-                  ? Math.min(...product.storePrices.map((sp) => sp.price))
+                  ? Math.min(
+                      ...product.storePrices.map((sp: StorePrice) => sp.price)
+                    )
                   : product.price
                 ).toFixed(0)}
               </span>
@@ -341,7 +343,7 @@ const ProductDetail = () => {
                 Category:{" "}
                 {product.category
                   .split("-")
-                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
                   .join(" & ")}
               </li>
               <li>Status: {product.inStock ? "In Stock" : "Out of Stock"}</li>
@@ -358,7 +360,6 @@ const ProductDetail = () => {
         <div className="mb-16">
           <PriceComparison
             storePrices={product.storePrices}
-            productName={product.name}
             defaultPrice={product.price}
           />
         </div>

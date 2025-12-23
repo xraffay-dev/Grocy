@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
-import { CreditCard, MapPin, User } from "lucide-react";
+import { CreditCard, MapPin } from "lucide-react";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, getTotalItems, clearCart } = useCart();
-  const [step, setStep] = useState(1);
+  const { items, getTotalPrice, clearCart } = useCart();
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",

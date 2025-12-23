@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Package, CheckCircle } from "lucide-react";
+import { Package } from "lucide-react";
 
 const OrderHistory = () => {
   const { isAuthenticated } = useAuth();

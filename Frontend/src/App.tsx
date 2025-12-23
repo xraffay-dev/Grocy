@@ -13,6 +13,7 @@ import Account from "./pages/Account";
 import OrderHistory from "./pages/OrderHistory";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route path="/stores/:store" element={<Products />} />
               <Route path="/stores/:store/:id" element={<ProductDetail />} />
               <Route path="/product/:id" element={<ProductDetail />} />

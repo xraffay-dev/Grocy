@@ -271,3 +271,12 @@ export const searchProductsWithMatches = async (query: string, limit = 20): Prom
     }
     return response.json();
 };
+
+export const searchProducts = async (query: string, limit = 50): Promise<ApiResponse> => {
+    const response = await fetch(`${API_BASE_URL}/search?query=${encodeURIComponent(query)}&limit=${limit}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+

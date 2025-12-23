@@ -1,11 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
-import {
-  products as mockProducts,
-  stores,
-  Product,
-} from "../data/mockProducts";
+import { Product, Store } from "../types";
+import { stores } from "../constants/stores";
 import { Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { getStoreFetcher, BackendProduct } from "../services/api";
 
@@ -89,21 +86,12 @@ const Products = () => {
     }
   }, [isBackendStore, store]);
 
-  const products = isBackendStore ? apiProducts : mockProducts;
+  const products = isBackendStore ? apiProducts : [];
 
-  let filteredProducts =
-    store && store !== "all" && !isBackendStore
-      ? products.filter((p) =>
-          p.storePrices?.some(
-            (sp) =>
-              sp.storeName.toLowerCase().replace(/\s+/g, "-") === store ||
-              stores.find((s) => s.id === store)?.name === sp.storeName
-          )
-        )
-      : products;
+  let filteredProducts = products;
 
   filteredProducts = filteredProducts.filter(
-    (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
+    (p: Product) => p.price >= priceRange[0] && p.price <= priceRange[1]
   );
 
   filteredProducts = [...filteredProducts].sort((a, b) => {
@@ -127,10 +115,10 @@ const Products = () => {
 
   const storeName =
     store && store !== "all"
-      ? stores.find((s) => s.path.includes(store))?.name ||
+      ? stores.find((s: Store) => s.path.includes(store))?.name ||
         store
           .split("-")
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
           .join(" ")
       : "All Products";
 
@@ -199,7 +187,7 @@ const Products = () => {
                 >
                   All Stores
                 </Link>
-                {stores.map((s) => {
+                {stores.map((s: Store) => {
                   const storeSlug = s.path.split("/").pop();
                   return (
                     <Link
@@ -271,7 +259,7 @@ const Products = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedProducts.map((product) => (
+                {paginatedProducts.map((product: Product) => (
                   <ProductCard
                     key={product.id}
                     product={product}

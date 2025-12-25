@@ -95,6 +95,10 @@ async function storeMetroData(items) {
         createdCount++;
       } else {
         updatedCount++;
+        console.log(`[UPDATED] ${productName}`);
+        console.log(
+          `  Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Discount: ${discount}%`
+        );
       }
       processedCount++;
     }

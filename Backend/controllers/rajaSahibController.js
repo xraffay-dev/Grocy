@@ -16,21 +16,45 @@ async function storeRajaSahibData(items) {
       }
 
       const productName = items[i][0]?.trim() || "";
-      const priceStr = items[i][2]?.trim() || "";
-      const cleanedPrice = priceStr
+
+      // Column [1] is the current/discounted price
+      const currentPriceStr = items[i][1]?.trim() || "";
+      const cleanedCurrentPrice = currentPriceStr
         .replace(/Rs\.?\s*/i, "")
         .replace(/,/g, "")
         .trim();
-      const originalPrice = parseFloat(cleanedPrice) || 0;
+      const currentPrice = parseFloat(cleanedCurrentPrice) || 0;
 
-      if (originalPrice === 0) {
+      if (currentPrice === 0) {
         skippedCount++;
         continue;
       }
 
-      const discountedPrice = originalPrice;
-      let productURL = items[i][6]?.trim() || "";
-      const productImage = items[i][5]?.trim() || "";
+      // Column [2] is the original price
+      const originalPriceStr = items[i][2]?.trim() || "";
+      const cleanedOriginalPrice = originalPriceStr
+        .replace(/Rs\.?\s*/i, "")
+        .replace(/,/g, "")
+        .trim();
+      const parsedOriginalPrice = parseFloat(cleanedOriginalPrice) || 0;
+
+      // Column [3] is the discount percentage
+      const discountStr = items[i][3]?.trim() || "";
+      const parsedDiscount = parseFloat(discountStr) || 0;
+
+      // If original price is empty, use current price and set discount to 0
+      let originalPrice, discountedPrice, discount;
+      if (parsedOriginalPrice === 0 || !originalPriceStr) {
+        originalPrice = currentPrice;
+        discountedPrice = currentPrice;
+        discount = 0;
+      } else {
+        originalPrice = parsedOriginalPrice;
+        discountedPrice = currentPrice;
+        discount = parsedDiscount;
+      }
+      let productURL = items[i][5]?.trim() || "";
+      const productImage = items[i][4]?.trim() || "";
 
       let filter;
       if (productURL) {
@@ -65,7 +89,7 @@ async function storeRajaSahibData(items) {
           productURL: productURL,
           originalPrice: originalPrice,
           discountedPrice: discountedPrice,
-          discount: 0,
+          discount: discount,
           availableAt: "Raja Sahib",
         },
         { upsert: true, new: true }
@@ -75,6 +99,10 @@ async function storeRajaSahibData(items) {
         createdCount++;
       } else {
         updatedCount++;
+        console.log(`[UPDATED] ${productName}`);
+        console.log(
+          `  Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Discount: ${discount}%`
+        );
       }
       processedCount++;
     }

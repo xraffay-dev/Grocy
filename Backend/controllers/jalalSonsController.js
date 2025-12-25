@@ -70,6 +70,10 @@ async function storeJalalSonsData(items) {
         createdCount++;
       } else {
         updatedCount++;
+        console.log(`[UPDATED] ${productName}`);
+        console.log(
+          `  Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Discount: 0%`
+        );
       }
       processedCount++;
     }

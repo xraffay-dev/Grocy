@@ -24,8 +24,7 @@ class FastProductMatchTester:
         
         self.client = MongoClient(mongo_uri)
         self.db = self.client[db_name]
-        self.matches_collection = self.db["ProductMatches"]
-        
+        self.matches_collection = self.db["Product Matches"]
         count = self.matches_collection.count_documents({})
         print(f" Loaded {count:,} products from database")
         print("\n Status: READY!\n")
@@ -172,6 +171,12 @@ class FastProductMatchTester:
         print("=" * 80)
         
         total = self.matches_collection.count_documents({})
+        
+        if total == 0:
+            print("\n ⚠️  No products found in database!")
+            print(" Please run 'python save_matches_to_db.py' first to generate matches.")
+            return
+        
         with_exact = self.matches_collection.count_documents({"total_exact_matches": {"$gt": 0}})
         with_semantic = self.matches_collection.count_documents({"total_semantic_matches": {"$gt": 0}})
         with_any = self.matches_collection.count_documents({"total_matches": {"$gt": 0}})

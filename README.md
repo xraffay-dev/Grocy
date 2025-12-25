@@ -4,7 +4,7 @@
 
 ![Grocy Banner](./Grocy%20Architecture%20Diagram.png)
 
-**An intelligent grocery shopping platform that helps you find the best deals across multiple stores using AI-powered product matching and recommendations.**
+**An intelligent grocery shopping platform that helps you find the best deals across multiple stores using AI-powered product matching and recommendations. The system automatically scrapes fresh product data every 12 hours, matches similar products across different stores for price comparison, generates personalized recommendations, and keeps the database continuously updated.**
 
 [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)

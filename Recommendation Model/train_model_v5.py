@@ -164,17 +164,7 @@ class ContrastiveAutoEncoderV5:
         # Ensure models directory exists
         os.makedirs("models", exist_ok=True)
 
-        # Add ModelCheckpoint only if directory creation succeeded
-        try:
-            checkpoint_path = os.path.abspath("models/best_autoencoder_v5.keras")
-            callbacks.append(
-                ModelCheckpoint(
-                    checkpoint_path, monitor="val_loss", save_best_only=True, verbose=1
-                )
-            )
-        except Exception as e:
-            print(f"Warning: Could not set up model checkpoint: {e}")
-            print("Training will continue without checkpointing...")
+        # ModelCheckpoint disabled to avoid Windows file locking issues
 
         print("\nTraining started...\n")
 

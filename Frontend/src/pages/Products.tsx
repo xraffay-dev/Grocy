@@ -19,7 +19,7 @@ const BACKEND_STORES = [
 const Products = () => {
   const { store } = useParams<{ store?: string }>();
   const [sortBy, setSortBy] = useState<"name" | "price-asc" | "price-desc">(
-    "name"
+    "name",
   );
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
@@ -70,7 +70,7 @@ const Products = () => {
                     link: item.productURL,
                   },
                 ],
-              })
+              }),
             );
             setApiProducts(shuffleArray(transformedProducts));
           } else {
@@ -91,7 +91,7 @@ const Products = () => {
   let filteredProducts = products;
 
   filteredProducts = filteredProducts.filter(
-    (p: Product) => p.price >= priceRange[0] && p.price <= priceRange[1]
+    (p: Product) => p.price >= priceRange[0] && p.price <= priceRange[1],
   );
 
   filteredProducts = [...filteredProducts].sort((a, b) => {

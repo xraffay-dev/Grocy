@@ -54,7 +54,7 @@ const Home = () => {
                 inStock: true,
                 storePrices,
               };
-            }
+            },
           );
 
           setFeaturedProducts(transformedProducts);
@@ -81,15 +81,16 @@ const Home = () => {
         <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
           <div className="max-w-3xl animate-slide-up">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-              Fresh Groceries
+              Compare Prices
               <br />
               <span className="bg-gradient-to-r from-white to-primary-100 bg-clip-text text-transparent">
-                Delivered to Your Door
+                Save on Every Purchase
               </span>
             </h1>
             <p className="text-xl md:text-2xl mb-10 text-primary-50 leading-relaxed">
-              Shop the freshest produce, premium meats, and everyday essentials.
-              Fast delivery, great prices, and quality you can trust.
+              AI-powered price comparison across Pakistan's top grocery stores.
+              Find the best deals from Al-Fatah, Metro, Jalal Sons, Raja Sahib &
+              Rahim Store.
             </p>
             <Link
               to="/products"
@@ -191,16 +192,19 @@ const Home = () => {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
             Why Choose <span className="gradient-text">Grocy?</span>
           </h2>
-          <p className="text-gray-600 text-lg">Experience the difference</p>
+          <p className="text-gray-600 text-lg">Smart shopping starts here</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="card p-8 text-center hover:scale-105 transition-transform duration-300 animate-fade-in">
             <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
-              <span className="text-4xl">🚚</span>
+              <span className="text-4xl">🤖</span>
             </div>
-            <h3 className="text-2xl font-bold mb-3">Fast Delivery</h3>
+            <h3 className="text-2xl font-bold mb-3">
+              AI-Powered Recommendations
+            </h3>
             <p className="text-gray-600 leading-relaxed">
-              Get your groceries delivered within hours, not days.
+              Machine learning algorithms find the best product matches and
+              savings opportunities across stores.
             </p>
           </div>
           <div
@@ -208,11 +212,12 @@ const Home = () => {
             style={{ animationDelay: "100ms" }}
           >
             <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
-              <span className="text-4xl">✨</span>
+              <span className="text-4xl">🔍</span>
             </div>
-            <h3 className="text-2xl font-bold mb-3">Fresh Quality</h3>
+            <h3 className="text-2xl font-bold mb-3">Smart Price Comparison</h3>
             <p className="text-gray-600 leading-relaxed">
-              We source only the freshest products from trusted suppliers.
+              Compare prices across 5 major stores instantly and find identical
+              products at the lowest prices.
             </p>
           </div>
           <div
@@ -222,9 +227,10 @@ const Home = () => {
             <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
               <span className="text-4xl">💰</span>
             </div>
-            <h3 className="text-2xl font-bold mb-3">Best Prices</h3>
+            <h3 className="text-2xl font-bold mb-3">Maximize Savings</h3>
             <p className="text-gray-600 leading-relaxed">
-              Competitive prices on all your favorite grocery items.
+              Real-time price tracking helps you save money on every purchase
+              with detailed savings analytics.
             </p>
           </div>
         </div>

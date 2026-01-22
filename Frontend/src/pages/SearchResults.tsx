@@ -44,7 +44,7 @@ const SearchResults = () => {
                   link: item.productURL,
                 },
               ],
-            })
+            }),
           );
           setProducts(transformedProducts);
         } else {
@@ -52,7 +52,7 @@ const SearchResults = () => {
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to search products"
+          err instanceof Error ? err.message : "Failed to search products",
         );
       } finally {
         setLoading(false);

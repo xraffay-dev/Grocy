@@ -135,7 +135,7 @@ const ProductDetail = () => {
           try {
             const recsResponse = await fetchYouMayAlsoLike(
               id,
-              item.product_name
+              item.product_name,
             );
             if (
               recsResponse.success &&
@@ -271,7 +271,7 @@ const ProductDetail = () => {
                 Rs.{" "}
                 {(product.storePrices && product.storePrices.length > 0
                   ? Math.min(
-                      ...product.storePrices.map((sp: StorePrice) => sp.price)
+                      ...product.storePrices.map((sp: StorePrice) => sp.price),
                     )
                   : product.price
                 ).toFixed(0)}
@@ -372,7 +372,7 @@ const ProductDetail = () => {
             <button
               onClick={() => {
                 const container = document.getElementById(
-                  "recommendations-carousel"
+                  "recommendations-carousel",
                 );
                 if (container) {
                   container.scrollBy({ left: -320, behavior: "smooth" });
@@ -387,7 +387,7 @@ const ProductDetail = () => {
             <button
               onClick={() => {
                 const container = document.getElementById(
-                  "recommendations-carousel"
+                  "recommendations-carousel",
                 );
                 if (container) {
                   container.scrollBy({ left: 320, behavior: "smooth" });

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import { stores } from "../constants/stores";
+import CountdownTimer from "./CountdownTimer";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -120,24 +121,27 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Navigation - Stores with Logos */}
-        <nav className="hidden md:flex items-center gap-3 py-4 border-t border-gray-200/50">
-          {stores.map((store) => (
-            <Link
-              key={store.path}
-              to={store.path}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-primary-50/50 transition-all duration-200 hover:scale-105 group"
-            >
-              <img
-                src={store.logo}
-                alt={store.name}
-                className="w-8 h-8 object-contain rounded-md"
-              />
-              <span className="text-gray-700 group-hover:text-primary-600 font-medium transition-colors">
-                {store.name}
-              </span>
-            </Link>
-          ))}
+        {/* Navigation - Stores with Logos and Countdown Timer */}
+        <nav className="hidden md:flex items-center justify-between gap-3 py-4 border-t border-gray-200/50">
+          <div className="flex items-center gap-3">
+            {stores.map((store) => (
+              <Link
+                key={store.path}
+                to={store.path}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-primary-50/50 transition-all duration-200 hover:scale-105 group"
+              >
+                <img
+                  src={store.logo}
+                  alt={store.name}
+                  className="w-8 h-8 object-contain rounded-md"
+                />
+                <span className="text-gray-700 group-hover:text-primary-600 font-medium transition-colors">
+                  {store.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+          <CountdownTimer />
         </nav>
 
         {/* Mobile Menu */}

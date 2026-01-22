@@ -10,9 +10,6 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
-import OrderHistory from "./pages/OrderHistory";
-import Contact from "./pages/Contact";
-import About from "./pages/About";
 import SearchResults from "./pages/SearchResults";
 
 function App() {
@@ -33,9 +30,6 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/account" element={<Account />} />
-              <Route path="/orders" element={<OrderHistory />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/about" element={<About />} />
             </Routes>
           </Layout>
         </CartProvider>

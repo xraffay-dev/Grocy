@@ -119,15 +119,15 @@ Each product document should have:
 
 ## Usage
 
-### Quick Start
+### Quick Start (Recommended)
 
 ```bash
 # Activate virtual environment
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
 
-# Generate matches and save to MongoDB (run once, takes ~4 minutes)
-python save_matches_to_db.py
+# Run the complete automated pipeline (takes ~4-5 minutes)
+python main.py
 
 # View statistics
 python show_statistics.py
@@ -136,12 +136,22 @@ python show_statistics.py
 python test_fast.py
 ```
 
-### Generate Product Matches
+### Automated Pipeline (main.py)
 
-Run once to generate all matches and save to MongoDB:
+The recommended way to generate matches is using the automated pipeline:
 
 ```bash
-python save_matches_to_db.py
+# Full pipeline (all 4 stages)
+python main.py
+
+# Skip database save
+python main.py --skip-save
+
+# Auto-overwrite without prompt
+python main.py --auto-overwrite
+
+# Custom number of matches per product
+python main.py --top-k 20
 ```
 
 This will:
@@ -160,6 +170,18 @@ Products with exact matches: 1,523 (7.6%)
 Products with semantic matches: 11,540 (57.4%)
 Products with any matches: 12,062 (60.0%)
 Products with best deals: 6,239 (31.0%)
+```
+
+### Alternative: Manual Script
+
+You can also run the original script directly:
+
+```bash
+# With interactive prompt
+python save_matches_to_db.py
+
+# With auto-overwrite
+python save_matches_to_db.py --auto-overwrite
 ```
 
 ### View Statistics

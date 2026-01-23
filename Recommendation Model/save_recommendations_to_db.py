@@ -13,6 +13,7 @@ from tqdm import tqdm
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import argparse
 
 
 # Custom L2 normalization layer (required for V5 model)
@@ -177,7 +178,7 @@ class RecommendationSaver:
 
         return documents
 
-    def save_to_mongodb(self, documents, collection_name="Product Recommendations"):
+    def save_to_mongodb(self, documents, collection_name="Product Recommendations", auto_overwrite=False):
         """Save recommendation documents to MongoDB."""
         print("\n" + "=" * 70)
         print(f"SAVING TO MONGODB: {collection_name}")
@@ -185,13 +186,19 @@ class RecommendationSaver:
 
         if collection_name in self.db.list_collection_names():
             print(f"Collection '{collection_name}' already exists")
-            response = input("  Overwrite? (y/n): ")
-            if response.lower() != "y":
-                print("Cancelled")
-                return
+            
+            if auto_overwrite:
+                print("  Auto-overwrite enabled, dropping existing collection...")
+                self.db[collection_name].drop()
+                print("Dropped existing collection")
+            else:
+                response = input("  Overwrite? (y/n): ")
+                if response.lower() != "y":
+                    print("Cancelled")
+                    return
 
-            self.db[collection_name].drop()
-            print("Dropped existing collection")
+                self.db[collection_name].drop()
+                print("Dropped existing collection")
 
         collection = self.db[collection_name]
 
@@ -202,7 +209,7 @@ class RecommendationSaver:
             batch = documents[i : i + batch_size]
             collection.insert_many(batch)
 
-        print(f"\n Saved {len(documents):,} documents to MongoDB")
+        print(f"\n✓ Saved {len(documents):,} documents to MongoDB")
 
         print("\nCreating indexes...")
         collection.create_index("product_id")
@@ -214,6 +221,14 @@ class RecommendationSaver:
 
 def main():
     """Main execution function."""
+    parser = argparse.ArgumentParser(description="Save product recommendations to MongoDB")
+    parser.add_argument(
+        "--auto-overwrite",
+        action="store_true",
+        help="Automatically overwrite existing collection without prompting"
+    )
+    args = parser.parse_args()
+    
     print("=" * 70)
     print("SAVE RECOMMENDATIONS TO MONGODB - V5 MODEL")
     print("99% Accuracy | 2.83x Category Separation")
@@ -232,10 +247,10 @@ def main():
             top_k=TOP_K, max_price_ratio=MAX_PRICE_RATIO
         )
 
-        saver.save_to_mongodb(documents, COLLECTION_NAME)
+        saver.save_to_mongodb(documents, COLLECTION_NAME, auto_overwrite=args.auto_overwrite)
 
         print("\n" + "=" * 70)
-        print(" ALL DONE!")
+        print("✓ ALL DONE!")
         print("=" * 70)
         print(f"\nMongoDB Collection: {COLLECTION_NAME}")
         print(f"Total documents: {len(documents):,}")
@@ -244,7 +259,7 @@ def main():
         return 0
 
     except Exception as e:
-        print(f"\n ERROR: {e}")
+        print(f"\n❌ ERROR: {e}")
         import traceback
 
         traceback.print_exc()

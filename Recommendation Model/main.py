@@ -3,10 +3,11 @@ Recommendation Model Retraining Pipeline
 =========================================
 Automates the complete retraining process:
 1. Extract fresh data from MongoDB
-2. Train the recommendation model
-3. Save recommendations to database
+2. Extract features from products
+3. Train the recommendation model
+4. Save recommendations to database
 
-Usage: python main.py [--skip-extract] [--skip-train] [--skip-save]
+Usage: python main.py [--skip-extract] [--skip-train] [--skip-save] [--clean]
 """
 
 import subprocess
@@ -53,7 +54,7 @@ def clean_generated_files():
     print("Cleanup complete.")
 
 
-def run_script(script_name, description):
+def run_script(script_name, description, extra_args=None):
     script_path = os.path.join(os.path.dirname(__file__), script_name)
     
     if not os.path.exists(script_path):
@@ -61,8 +62,12 @@ def run_script(script_name, description):
         return False
     
     try:
+        cmd = [sys.executable, script_path]
+        if extra_args:
+            cmd.extend(extra_args)
+            
         result = subprocess.run(
-            [sys.executable, script_path],
+            cmd,
             cwd=os.path.dirname(__file__),
             check=True
         )
@@ -102,7 +107,12 @@ def main():
     for i, (script, description) in enumerate(scripts_to_run, 1):
         print_step(i, total_steps, description)
         
-        success = run_script(script, description)
+        # Add --auto-overwrite flag for save_recommendations_to_db.py
+        extra_args = None
+        if script == "save_recommendations_to_db.py":
+            extra_args = ["--auto-overwrite"]
+        
+        success = run_script(script, description, extra_args)
         
         if success:
             print(f"Completed: {script}")

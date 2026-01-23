@@ -16,6 +16,8 @@ from data_loader import ProductDataLoader
 from product_matcher import ProductMatcher
 from price_comparator import PriceComparator
 from preprocessing import extract_product_attributes
+import argparse
+
 
 
 class ProductMatchSaver:
@@ -188,7 +190,7 @@ class ProductMatchSaver:
         
         return documents
     
-    def save_to_mongodb(self, documents, collection_name='Product Matches'):
+    def save_to_mongodb(self, documents, collection_name='Product Matches', auto_overwrite=False):
         """Save match documents to MongoDB."""
         print("\n" + "=" * 80)
         print(f"SAVING TO MONGODB: {collection_name}")
@@ -196,13 +198,19 @@ class ProductMatchSaver:
         
         if collection_name in self.db.list_collection_names():
             print(f"Collection '{collection_name}' already exists")
-            response = input("  Overwrite? (y/n): ")
-            if response.lower() != 'y':
-                print("Cancelled")
-                return
             
-            self.db[collection_name].drop()
-            print(f"Dropped existing collection")
+            if auto_overwrite:
+                print("  Auto-overwrite enabled, dropping existing collection...")
+                self.db[collection_name].drop()
+                print("Dropped existing collection")
+            else:
+                response = input("  Overwrite? (y/n): ")
+                if response.lower() != 'y':
+                    print("Cancelled")
+                    return
+                
+                self.db[collection_name].drop()
+                print(f"Dropped existing collection")
         
         collection = self.db[collection_name]
         
@@ -213,7 +221,7 @@ class ProductMatchSaver:
             batch = documents[i:i+batch_size]
             collection.insert_many(batch)
         
-        print(f"\nSaved {len(documents):,} documents to MongoDB")
+        print(f"\n✓ Saved {len(documents):,} documents to MongoDB")
         
         print("\nCreating indexes...")
         collection.create_index('product_id')
@@ -230,6 +238,14 @@ class ProductMatchSaver:
 
 def main():
     """Main execution function."""
+    parser = argparse.ArgumentParser(description="Save product matches to MongoDB")
+    parser.add_argument(
+        "--auto-overwrite",
+        action="store_true",
+        help="Automatically overwrite existing collection without prompting"
+    )
+    args = parser.parse_args()
+    
     print("=" * 80)
     print("SAVE PRODUCT MATCHES TO MONGODB")
     print("4-Stage Matching System | Cross-Store Price Comparison")
@@ -245,10 +261,10 @@ def main():
         
         documents = saver.generate_matches_for_all(top_k=TOP_K)
         
-        saver.save_to_mongodb(documents, COLLECTION_NAME)
+        saver.save_to_mongodb(documents, COLLECTION_NAME, auto_overwrite=args.auto_overwrite)
         
         print("\n" + "=" * 80)
-        print("ALL DONE!")
+        print("✓ ALL DONE!")
         print("=" * 80)
         print(f"\nMongoDB Collection: {COLLECTION_NAME}")
         print(f"Total documents: {len(documents):,}")
@@ -259,7 +275,7 @@ def main():
         return 0
         
     except Exception as e:
-        print(f"\nERROR: {e}")
+        print(f"\n❌ ERROR: {e}")
         import traceback
         traceback.print_exc()
         return 1

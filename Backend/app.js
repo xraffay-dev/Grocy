@@ -33,13 +33,13 @@ connectDB();
 // extractData("./scrapped data/Rahim Store.csv", "rahimStore");
 
 // app.use("/metro", metroRouter);
+// app.use("/search", searchRouter);
 // app.use("/alfatah", alFatahRouter);
 // app.use("/featured", featuredRouter);
 // app.use("/jalalsons", jalalSonsRouter);
 // app.use("/rajasahib", rajaSahibRouter);
 // app.use("/rahimstore", rahimStoreRouter);
 // app.use("/matches", productMatchesRouter);
-// app.use("/search", searchRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

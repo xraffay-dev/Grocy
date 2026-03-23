@@ -88,7 +88,7 @@ async function storeMetroData(items) {
           discount: discount,
           availableAt: "Metro",
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       );
 
       if (isNew) {
@@ -97,14 +97,14 @@ async function storeMetroData(items) {
         updatedCount++;
         console.log(`[UPDATED] ${productName}`);
         console.log(
-          `  Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Discount: ${discount}%`
+          `  Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Discount: ${discount}%`,
         );
       }
       processedCount++;
     }
 
     console.log(
-      `Metro: ${processedCount} processed (${createdCount} created, ${updatedCount} updated), ${skippedCount} skipped`
+      `Metro: ${processedCount} processed (${createdCount} created, ${updatedCount} updated), ${skippedCount} skipped`,
     );
   } catch (error) {
     console.error("Error storing products:", error);
@@ -112,14 +112,20 @@ async function storeMetroData(items) {
   }
 }
 
-const displayProducts = async () => {
+const displayProducts = async (page = 1, limit = 50) => {
   const productModel = mongoose.model("Metro", productSchema, "Metro");
-  const products = await productModel.find();
+
+  const skip = (page - 1) * limit;
+  const total = await productModel.countDocuments();
+  const products = await productModel.find().skip(skip).limit(limit).lean();
 
   return {
     success: true,
     status: 200,
     count: products.length,
+    total: total,
+    page: page,
+    totalPages: Math.ceil(total / limit),
     data: products,
   };
 };

@@ -1,8 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, Search, Menu, X } from "lucide-react";
+import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
 import { stores } from "../constants/stores";
 import CountdownTimer from "./CountdownTimer";
 
@@ -10,7 +9,6 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { getTotalItems } = useCart();
-  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -52,32 +50,6 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-3">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to="/account"
-                  className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-200"
-                >
-                  <User size={22} />
-                  <span className="font-medium">Account</span>
-                </Link>
-                <button
-                  onClick={logout}
-                  className="hidden md:block px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-200 font-medium"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/login"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-200"
-              >
-                <User size={22} />
-                <span className="font-medium">Login</span>
-              </Link>
-            )}
-
             <Link
               to="/cart"
               className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 hover:bg-primary-50/50 transition-all duration-200 group"
@@ -163,34 +135,6 @@ const Header = () => {
                   <span>{store.name}</span>
                 </Link>
               ))}
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to="/account"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-gray-700 hover:text-primary-600 font-medium"
-                  >
-                    Account
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="text-left text-gray-700 hover:text-primary-600 font-medium"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-gray-700 hover:text-primary-600 font-medium"
-                >
-                  Login
-                </Link>
-              )}
             </div>
           </div>
         )}

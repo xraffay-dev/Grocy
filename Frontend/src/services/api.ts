@@ -3,6 +3,29 @@
 // Production: uses .env.production (CloudFront URL)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
+/**
+ * Fetch with timeout to prevent hanging requests
+ * @param url - URL to fetch
+ * @param timeout - Timeout in milliseconds (default: 30000)
+ * @returns Promise<Response>
+ */
+const fetchWithTimeout = async (url: string, timeout = 30000): Promise<Response> => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(id);
+        return response;
+    } catch (error) {
+        clearTimeout(id);
+        if (error instanceof Error && error.name === 'AbortError') {
+            throw new Error('Request timeout - please try again');
+        }
+        throw error;
+    }
+};
+
 export interface BackendProduct {
     _id: string;
     productID?: string;
@@ -72,7 +95,7 @@ export interface SingleFeaturedResponse {
 }
 
 export const fetchAlFatahProducts = async (): Promise<ApiResponse> => {
-    const response = await fetch(`${API_BASE_URL}/alfatah`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/alfatah`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -80,7 +103,7 @@ export const fetchAlFatahProducts = async (): Promise<ApiResponse> => {
 };
 
 export const fetchMetroProducts = async (): Promise<ApiResponse> => {
-    const response = await fetch(`${API_BASE_URL}/metro`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/metro`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -88,7 +111,7 @@ export const fetchMetroProducts = async (): Promise<ApiResponse> => {
 };
 
 export const fetchJalalSonsProducts = async (): Promise<ApiResponse> => {
-    const response = await fetch(`${API_BASE_URL}/jalalsons`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/jalalsons`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }

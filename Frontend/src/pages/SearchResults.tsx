@@ -26,25 +26,39 @@ const SearchResults = () => {
         const response = await searchProducts(query);
 
         if (response.success) {
+          // Map store names to URL slugs
+          const storeSlugMap: Record<string, string> = {
+            "Al-Fatah": "al-fatah",
+            Metro: "metro",
+            "Jalal Sons": "jalal-sons",
+            "Raja Sahib": "raja-sahib",
+            "Rahim Store": "rahim-store",
+          };
+
           const transformedProducts: Product[] = response.data.map(
-            (item: BackendProduct) => ({
-              id: item._id,
-              name: item.productName,
-              price: item.discountedPrice || item.originalPrice,
-              image: item.productImage || "https://via.placeholder.com/400",
-              category: "general",
-              description: `Available at ${item.availableAt}`,
-              inStock: true,
-              storePrices: [
-                {
-                  storeId: item._id,
-                  storeName: item.availableAt,
-                  price: item.discountedPrice || item.originalPrice,
-                  inStock: true,
-                  link: item.productURL,
-                },
-              ],
-            }),
+            (item: BackendProduct) => {
+              const storeSlug = storeSlugMap[item.availableAt] || "";
+
+              return {
+                id: item._id,
+                name: item.productName,
+                price: item.discountedPrice || item.originalPrice,
+                image: item.productImage || "https://via.placeholder.com/400",
+                category: "general",
+                description: `Available at ${item.availableAt}`,
+                inStock: true,
+                storeSlug, // Add store slug for routing
+                storePrices: [
+                  {
+                    storeId: item._id,
+                    storeName: item.availableAt,
+                    price: item.discountedPrice || item.originalPrice,
+                    inStock: true,
+                    link: item.productURL,
+                  },
+                ],
+              };
+            },
           );
           setProducts(transformedProducts);
         } else {

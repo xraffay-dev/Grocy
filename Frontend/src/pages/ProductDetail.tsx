@@ -79,6 +79,44 @@ const ProductDetail = () => {
             };
 
             setProduct(transformedProduct);
+
+            // Fetch recommendations for store-specific products
+            try {
+              const recsResponse = await fetchYouMayAlsoLike(
+                id,
+                item.productName,
+              );
+              if (
+                recsResponse.success &&
+                recsResponse.data?.recommendations?.length > 0
+              ) {
+                const transformedRelated = recsResponse.data.recommendations
+                  .slice(0, 10)
+                  .map((rec: FeaturedRecommendation) => ({
+                    id: rec.product_id,
+                    name: rec.name,
+                    price: rec.price,
+                    image: rec.image || "https://via.placeholder.com/400",
+                    category: rec.category || "general",
+                    description: `Available at ${rec.store}`,
+                    storeUrl: rec.url || undefined,
+                    inStock: true,
+                    storePrices: [
+                      {
+                        storeId: rec.product_id,
+                        storeName: rec.store,
+                        price: rec.price,
+                        inStock: true,
+                        link: rec.url,
+                      },
+                    ],
+                  }));
+                setRelatedProducts(transformedRelated);
+              }
+            } catch {
+              console.log("No recommendations available for this product");
+            }
+
             setLoading(false);
             return;
           } else {

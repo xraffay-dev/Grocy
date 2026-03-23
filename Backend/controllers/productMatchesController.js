@@ -127,7 +127,7 @@ const searchProductMatches = async (query, limit = 20) => {
 const getProductRecommendations = async (productId, productName = null) => {
   try {
     const collection = mongoose.connection.db.collection(
-      "Product Recommendations"
+      "Product Recommendations",
     );
 
     let product = await collection.findOne({ product_id: productId });

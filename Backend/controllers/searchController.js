@@ -1,4 +1,5 @@
 const { getProductModel } = require("../models/productModel");
+const { sanitizeSearchQuery } = require("../utils/queryHelpers");
 
 const searchProducts = async (req, res) => {
   try {
@@ -11,7 +12,8 @@ const searchProducts = async (req, res) => {
       });
     }
 
-    const searchRegex = new RegExp(query.trim(), "i");
+    const sanitizedQuery = sanitizeSearchQuery(query);
+    const searchRegex = new RegExp(sanitizedQuery, "i");
     const limitNum = parseInt(limit);
 
     const stores = [
@@ -32,7 +34,8 @@ const searchProducts = async (req, res) => {
 
     const uniqueResults = allResults.reduce((acc, product) => {
       const existingProduct = acc.find(
-        (p) => p.productName.toLowerCase() === product.productName.toLowerCase()
+        (p) =>
+          p.productName.toLowerCase() === product.productName.toLowerCase(),
       );
 
       if (!existingProduct) {

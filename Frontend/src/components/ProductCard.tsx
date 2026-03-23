@@ -11,10 +11,16 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, storePath }: ProductCardProps) => {
   const { addToCart } = useCart();
-  const { id, name, price, image, storePrices, promotionalBanners } = product;
+  const { id, name, price, image, storePrices, promotionalBanners, storeSlug } =
+    product;
 
-  // Generate product URL based on whether we're in a store-specific view
-  const productUrl = storePath ? `${storePath}/${id}` : `/product/${id}`;
+  // Generate product URL based on context
+  // Priority: 1. storePath (from Products page), 2. storeSlug (from search results), 3. generic product page
+  const productUrl = storePath
+    ? `${storePath}/${id}`
+    : storeSlug
+      ? `/stores/${storeSlug}/${id}`
+      : `/product/${id}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

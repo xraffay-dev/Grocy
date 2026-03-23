@@ -21,6 +21,7 @@ export interface Product {
     description: string;
     inStock: boolean;
     storeUrl?: string;
+    storeSlug?: string; // Store slug for routing (e.g., "metro", "al-fatah")
     storePrices?: StorePrice[];
     promotionalBanners?: PromotionalBanner[];
 }

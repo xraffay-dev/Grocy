@@ -8,16 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --omit=dev
 
 # Copy application source code
 COPY . .
-
-# # TODO: REMOVE BEFORE PUSHING TO DOCKERHUB - Environment variables for testing only
-# # host.docker.internal is a special DNS name that resolves to the internal IP address of the host machine and needs to be changed before pushing to dokerhub
-# ENV MONGO_URI=mongodb://host.docker.internal:27017/
-# ENV PORT=8000
-# ENV FRONTEND_URL=http://localhost:5173
 
 # Create a non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -33,4 +27,4 @@ USER nodejs
 EXPOSE 8000
 
 # Start the application
-CMD ["npm", "run", "dev"]
+CMD ["node", "app.js"]

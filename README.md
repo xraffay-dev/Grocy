@@ -29,7 +29,7 @@
 - [ML Models](#-ml-models)
 - [API Documentation](#-api-documentation)
 - [Performance Metrics](#-performance-metrics)
-- [Screenshots](#-screenshots)
+- [Demo](#-demo)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -81,8 +81,6 @@
 ### 🛍️ **Shopping Features**
 
 - Shopping cart with multi-store support
-- User authentication and accounts
-- Order history tracking
 - Responsive mobile-first design
 
 ---
@@ -169,6 +167,8 @@ Grocy/
 │   │   │   ├── Footer.tsx        # Site footer
 │   │   │   ├── ProductCard.tsx   # Product display card
 │   │   │   ├── PriceComparison.tsx  # Price comparison widget
+│   │   │   ├── CountdownTimer.tsx   # Restock countdown timer
+│   │   │   ├── ErrorBoundary.tsx    # Error boundary wrapper
 │   │   │   └── Layout.tsx        # Main layout wrapper
 │   │   ├── pages/                # Route pages
 │   │   │   ├── Home.tsx          # Landing page
@@ -176,15 +176,8 @@ Grocy/
 │   │   │   ├── ProductDetail.tsx # Product details
 │   │   │   ├── SearchResults.tsx # Search results
 │   │   │   ├── Cart.tsx          # Shopping cart
-│   │   │   ├── Checkout.tsx      # Checkout flow
-│   │   │   ├── Login.tsx         # User login
-│   │   │   ├── Register.tsx      # User registration
-│   │   │   ├── Account.tsx       # User account
-│   │   │   ├── OrderHistory.tsx  # Order history
-│   │   │   ├── About.tsx         # About page
-│   │   │   └── Contact.tsx       # Contact page
+│   │   │   └── Checkout.tsx      # Checkout flow
 │   │   ├── contexts/             # React contexts
-│   │   │   ├── AuthContext.tsx   # Authentication state
 │   │   │   └── CartContext.tsx   # Shopping cart state
 │   │   ├── services/             # API services
 │   │   │   └── api.ts            # API client
@@ -374,7 +367,6 @@ python save_recommendations_to_db.py
 - Real-time search with autocomplete
 - Store navigation links
 - Shopping cart indicator
-- User authentication menu
 
 #### **ProductCard Component**
 
@@ -538,27 +530,11 @@ Input (1192 dims) → Dense(512) → Dense(256) → Dense(128) → L2 Norm
 
 ---
 
-## 📸 Screenshots
+## 🎬 Demo
 
-### Home Page
+![Grocy Demo](./demo.MP4)
 
-_Beautiful landing page with featured products and store navigation_
-
-### Product Listing
-
-_Grid view of products with filters and sorting options_
-
-### Product Details
-
-_Detailed product view with price comparison and recommendations_
-
-### Search Results
-
-_Real-time search with intelligent matching across all stores_
-
-### Price Comparison
-
-_Side-by-side comparison showing best deals and savings_
+> Full walkthrough of the platform — search across 5 stores, view price comparisons, and see AI recommendations in action.
 
 ---
 

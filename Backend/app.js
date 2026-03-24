@@ -18,7 +18,7 @@ const app = express();
 
 // Rate limiting configuration
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
+  windowMs: 15 * 60 * 1000,
   max: 100,
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
@@ -31,7 +31,7 @@ app.use(limiter);
 // CORS configuration with environment variable
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
@@ -40,22 +40,22 @@ app.use(
 const PORT = process.env.PORT || 8000;
 
 connectDB().then(() => {
-// extractData("./scrapped data/Metro.csv", "metro");
-// extractData("./scrapped data/Al-Fatah.csv", "alFatah");
-// extractData("./scrapped data/Jalal Sons.csv", "jalalSons");
-// extractData("./scrapped data/Raja Sahib.csv", "rajaSahib");
-// extractData("./scrapped data/Rahim Store.csv", "rahimStore");
+  // extractData("./scrapped data/Metro.csv", "metro");
+  // extractData("./scrapped data/Al-Fatah.csv", "alFatah");
+  // extractData("./scrapped data/Jalal Sons.csv", "jalalSons");
+  // extractData("./scrapped data/Raja Sahib.csv", "rajaSahib");
+  // extractData("./scrapped data/Rahim Store.csv", "rahimStore");
 
-app.use("/metro", metroRouter);
-app.use("/search", searchRouter);
-app.use("/alfatah", alFatahRouter);
-app.use("/featured", featuredRouter);
-app.use("/jalalsons", jalalSonsRouter);
-app.use("/rajasahib", rajaSahibRouter);
-app.use("/rahimstore", rahimStoreRouter);
-app.use("/matches", productMatchesRouter);
+  app.use("/metro", metroRouter);
+  app.use("/search", searchRouter);
+  app.use("/alfatah", alFatahRouter);
+  app.use("/featured", featuredRouter);
+  app.use("/jalalsons", jalalSonsRouter);
+  app.use("/rajasahib", rajaSahibRouter);
+  app.use("/rahimstore", rahimStoreRouter);
+  app.use("/matches", productMatchesRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 });

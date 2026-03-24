@@ -28,11 +28,21 @@ const limiter = rateLimit({
 // Apply rate limiting to all routes
 app.use(limiter);
 
-// CORS configuration with environment variable
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://grocy-02c9.onrender.com",
+];
+
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
